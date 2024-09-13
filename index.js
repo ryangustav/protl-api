@@ -28,7 +28,7 @@ app.post("/proofreader", async function(req, res) {
       ];
       
      await parts.forEach(async (part, index) => {
-        fs.writeFile(`./translation/parte ${index + 1}.txt`, part.join('\n'), (err) => {
+        fs.writeFile(`./parte ${index + 1}.txt`, part.join('\n'), (err) => {
             if (err) {
                 console.error('Error writing file:', err);
             } else {
