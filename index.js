@@ -13,97 +13,46 @@ app.get("/", (req, res) => {
 app.post("/proofreader", async function(req, res) {
   console.log("teste")
     //console.log(req.body.translation)
-    const translationPromise = req.body.translation.toString().replace(/\n/g, '\n\t').replace(/\\n/g, '\n').replace(/^[\s,"']+|['",\s]+$/g, '')
+    const translationPromise = req.body.translation.toString().replace(/\n/g, '\n\t').replace(/\\n/g, '\n').replace(/^[\s,"']+|['",\s]+$/g, '');
 
-      console.log(translationPromise.toString())
-      const translationAwaitPromise = await translationPromise;
-      const translation = translationAwaitPromise.split('\n');
-      const division = Math.ceil(translation.length / 4);
-      
-      const parts = [
-        translation.slice(0, division),
-        translation.slice(division, division * 2),
-        translation.slice(division * 2, division * 3),
-        translation.slice(division * 3)
-      ];
-      
-     await parts.forEach(async (part, index) => {
-        fs.writeFile(`./parte ${index + 1}.txt`, part.join('\n'), (err) => {
-            if (err) {
-                console.error('Error writing file:', err);
-            } else {
-                console.log("[!] ".green + `Parte ${index + 1} saved successfully.`);
+console.log(translationPromise.toString());
 
-            }
-        });
-      });
+const translation = translationPromise.split('\n');
+const division = Math.ceil(translation.length / 4);
 
-      let title;
+const parts = [];
+for (let i = 0; i < translation.length; i += division) {
+  parts.push(translation.slice(i, i + division).join('\n'));
+}
 
-      const proofOnePromise = new Promise((resolve, reject) => {
-  
-  
-  
-          fs.readFile('./public/parte 1.txt', 'utf-8', (err, proof) => {
-            if (err) {
-              reject(err);
-            } else {
-              title = proof.split('\n');
-              resolve(proof);
-            }
-          });
-        });
-  
-        
-        const proofTwoPromise = new Promise((resolve, reject) => {
-          fs.readFile('./public/parte 2.txt', 'utf-8', (err, proof) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(proof);
-            }
-          });
-        });
-        const proofThreePromise = new Promise((resolve, reject) => {
-          fs.readFile('./public/parte 3.txt', 'utf-8', (err, proof) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(proof);
-            }
-          });
-        });
-      
-        const proofFourPromise = new Promise((resolve, reject) => {
-          fs.readFile('./public/parte 4.txt', 'utf-8', (err, proof) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(proof);
-            }
-          });
-        });
+let title;
 
+const proofPromises = parts.map(part => {
+  return new Promise((resolve, reject) => {
+    const processedPart = part.split('\n'); // Simulate processing the part
+    title = processedPart; // Assuming title is the first line
+    resolve(processedPart);
+  });
+});
 
+Promise.all(proofPromises)
+  .then(async proofs => {
+    const revisaoum = await proofreader(proofs[0]);
+    const revisaodois = await proofreader(proofs[1]);
+    const revisaothree = await proofreader(proofs[2]);
+    const revisaofour = await proofreader(proofs[3]);
 
-const proofone = await proofOnePromise;
-const prooftwo = await proofTwoPromise;
-const proofthree = await proofThreePromise;
-const prooffour = await proofFourPromise;
-let revisaodois, revisaothree, revisaofour, proofed;
-//console.log(proof);
-const revisaoum = await proofreader(proofone);
-setTimeout(async () => { revisaodois = await proofreader(prooftwo); console.log("passed")}, 8000)
-setTimeout(async () => {  revisaothree = await proofreader(proofthree); console.log("passed")}, 13000)
-setTimeout(async () => {  revisaofour = await proofreader(prooffour); console.log("passed")}, 19000)
-setTimeout(async () => { 
+    const proofed = revisaoum[0].content.parts[0].text + revisaodois[0].content.parts[0].text + revisaothree[0].content.parts[0].text + revisaofour[0].content.parts[0].text;
 
-proofed = revisaoum[0].content.parts[0].text + revisaodois[0].content.parts[0].text + revisaothree[0].content.parts[0].text + revisaofour[0].content.parts[0].text; 
-res.status(201)
-console.log(JSON.stringify(proofed))
-res.send({ "status": 201, "revisao": JSON.stringify(proofed) })
-console.log("passed")
-}, 26000)
+    res.status(201);
+    console.log(JSON.stringify(proofed));
+    res.send({ "status": 201, "revisao": JSON.stringify(proofed) });
+    console.log("passed");
+  })
+  .catch(err => {
+    console.error(err);
+    res.status(500).send({ error: err.message });
+  });
 //console.log(proofed, revisaoum.candidates)
 
   
