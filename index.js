@@ -7,10 +7,11 @@ const app = express()
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send({ status: 404, message: "Invalid request"})
+  res.send({ status: 404, message: "Invalid request....."})
 })
 
 app.post("/proofreader", async function(req, res) {
+  console.log("teste")
     //console.log(req.body.translation)
     const translationPromise = req.body.translation.toString().replace(/\n/g, '\n\t').replace(/\\n/g, '\n').replace(/^[\s,"']+|['",\s]+$/g, '')
 
@@ -110,6 +111,6 @@ console.log("passed")
 })
 
 app.listen(8080, app => {
-console.clear()
+//console.clear()
 console.log("Servidor iniciado")
 })
