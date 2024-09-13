@@ -3,7 +3,7 @@ require('dotenv').config()
 const fs = require ('fs');
 
 const token = process.env.gemini_token;
-const genAI = new GoogleGenerativeAI(token.toString());
+const genAI = new GoogleGenerativeAI('AIzaSyAq6bKlLLLOsZKKJML-evHWScKviXvOnJY');
 
 async function proofreader(translation) {
     const personalityFilePath = './src/memory/proofreader/memory.txt';
