@@ -44,7 +44,7 @@ app.post("/proofreader", async function(req, res) {
   
   
   
-          fs.readFile('./parte 1.txt', 'utf-8', (err, proof) => {
+          fs.readFile('./public/parte 1.txt', 'utf-8', (err, proof) => {
             if (err) {
               reject(err);
             } else {
@@ -56,7 +56,7 @@ app.post("/proofreader", async function(req, res) {
   
         
         const proofTwoPromise = new Promise((resolve, reject) => {
-          fs.readFile('./parte 2.txt', 'utf-8', (err, proof) => {
+          fs.readFile('./public/parte 2.txt', 'utf-8', (err, proof) => {
             if (err) {
               reject(err);
             } else {
@@ -65,7 +65,7 @@ app.post("/proofreader", async function(req, res) {
           });
         });
         const proofThreePromise = new Promise((resolve, reject) => {
-          fs.readFile('./parte 3.txt', 'utf-8', (err, proof) => {
+          fs.readFile('./public/parte 3.txt', 'utf-8', (err, proof) => {
             if (err) {
               reject(err);
             } else {
@@ -75,7 +75,7 @@ app.post("/proofreader", async function(req, res) {
         });
       
         const proofFourPromise = new Promise((resolve, reject) => {
-          fs.readFile('./parte 4.txt', 'utf-8', (err, proof) => {
+          fs.readFile('./public/parte 4.txt', 'utf-8', (err, proof) => {
             if (err) {
               reject(err);
             } else {
